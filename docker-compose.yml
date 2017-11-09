@@ -1,24 +1,37 @@
 version: "3"
 services:
   app:
+    container_name: mevn_app
     build: ./app
     volumes:
-      - /home/unroot/Development/projects/mevn-docker/app:/usr/src/app
+      - ./app:/usr/src/app
       - /usr/src/app/node_modules
     ports:
       - "8080:8080"
     command: npm run start
   api:
+    container_name: mevn_api
     build: ./api
     volumes:
-      - /home/unroot/Development/projects/mevn-docker/api:/usr/src/api
+      - ./api:/usr/src/api
       - /usr/src/api/node_modules
     ports:
       - "3000:3000"
     links:
       - database
+      - cache
     command: npm run start
+  cache:
+    container_name: mevn_cs
+    image: redis
+    volumes:
+      - ./cs:/data
+    ports:
+      - "6379:6379"
   database:
+    container_name: mevn_db
     image: mongo
+    volumes:
+      - ./db:/data/db
     ports:
       - "27017:27017"

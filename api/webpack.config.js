@@ -1,5 +1,6 @@
 const webpack = require('webpack')
 const path = require('path')
+const nodeExternals = require('webpack-node-externals')
 
 module.exports = {
 	entry: './src/server.js',
@@ -14,5 +15,6 @@ module.exports = {
 			loader: 'babel-loader'
 		}]
 	},
+	externals: [nodeExternals()],
 	target: 'node'
 }

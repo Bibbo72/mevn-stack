@@ -1,3 +1,12 @@
+/**
+ * EXPRESS SERVER CONFIGURATION
+ *
+ * This is the main Express server configuration
+ * file and it contains all of your middleware
+ * instances as well as your routes.
+ * 
+ */
+
 //=-=======================================
 // IMPORTS && CONSTANTS
 //=-=======================================
@@ -9,7 +18,7 @@ import helmet from 'helmet'
 
 // Local Imports
 import routes from '../routes'
-import passport from '../config/passport'
+import passport from '../config/authentication'
 
 // Constants
 const app = express()

@@ -8,7 +8,8 @@ chai.use(chaiHttp)
 
 const username = 'mochatest'
 const email = 'mochatest@test.com'
-const hash = 'cleartextpassword' 
+const hash = 'cleartextpassword'
+const uuid = '7777-7777-7777-7777'
 
 //=-=======================================
 // USERS TESTING
@@ -28,7 +29,7 @@ describe('USER SUCCESS', () => {
 	it('should create a new user and save it to the database', (done) => {
 		chai.request(api)
 			.post('/api/users')
-			.send({'username': username, 'email': email, 'hash': hash})
+			.send({'username': username, 'email': email, 'hash': hash, 'uuid': uuid})
 			.end((err, res) => {
 				res.should.have.status(201)
 				res.should.be.json
@@ -46,6 +47,8 @@ describe('USER SUCCESS', () => {
 			.get(`/api/users/${username}`)
 			.end((err, res) => {
 				res.should.have.status(200)
+				res.should.be.json
+				res.body.should.be.a('object')
 				done()
 			})
 	})

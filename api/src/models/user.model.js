@@ -13,9 +13,10 @@ const UserSchema = new Schema({
 	username: { type: String, required: true, unique: true },
 	email: { type: String, required: true, unique: true, lowercase: true },
 	hash: { type: String, required: true },
-	role: { type: String, enum: ['ROLE_ADMIN', 'ROLE_USER'], default: 'ROLE_USER' },
-	resetPasswordToken: {type: String},
-	resetPasswordExpires: { type: Date }
+	role: { type: String, required: true, enum: ['ROLE_ADMIN', 'ROLE_USER'], default: 'ROLE_USER' },
+	uuid: { type: String, required: true, unique: true },
+	resetPasswordToken: { type: String, select: false },
+	resetPasswordExpires: { type: Date, select: false }
 },
 {
 	timestamps: true
@@ -24,9 +25,12 @@ const UserSchema = new Schema({
 //=-=======================================
 // PRE
 //=-=======================================
+/**
+ * [Hash a password with Bcrypt before saving it to Mongo]
+ */
 UserSchema.pre('save', async function(next) {
 	try {
-		const salt = await bcrypt.genSalt(10)
+		const salt = await bcrypt.genSalt(12)
 		const hash = await bcrypt.hash(this.hash, salt)
 		this.hash = hash
 		next()
@@ -36,6 +40,9 @@ UserSchema.pre('save', async function(next) {
 	}
 })
 
+/**
+ * [If there is a password update with the request, hash it before updating]
+ */
 UserSchema.pre('findOneAndUpdate', async function(next) {
 	try {
 		if (this._update.hash) {
@@ -52,8 +59,12 @@ UserSchema.pre('findOneAndUpdate', async function(next) {
 })
 
 //=-=======================================
-// SERVICES / METHODS
+// METHODS
 //=-=======================================
+/**
+ * [Hash password then verify the hash against the database]
+ * @return { boolean } [returns True if there is a match]
+ */
 UserSchema.methods.verifyHash = async function(password) {
 	try {
 		return await bcrypt.compare(password, this.hash)
